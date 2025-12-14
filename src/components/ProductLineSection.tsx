@@ -59,7 +59,7 @@ export function ProductLineSection({
     <section
       id={sectionId}
       className={cn(
-        "relative min-h-screen flex items-center justify-center overflow-hidden py-20 bg-gradient-to-b from-slate-950 via-black to-slate-950"
+        "relative min-h-screen flex items-center justify-center overflow-hidden py-12 md:py-20 bg-gradient-to-b from-slate-950 via-black to-slate-950"
       )}
     >
       <div className="absolute inset-0 matrix-dots opacity-3" aria-hidden="true" />
@@ -74,7 +74,7 @@ export function ProductLineSection({
           {/* Product Image */}
           <div
             className={cn(
-              "flex items-center justify-center min-h-[500px]",
+              "flex items-center justify-center min-h-[350px] lg:min-h-[500px]",
               !isEven && "lg:col-start-2"
             )}
           >
@@ -103,7 +103,7 @@ export function ProductLineSection({
           >
             <div className="space-y-6">
               <div>
-                <h2 className="font-display text-5xl md:text-6xl font-bold mb-4 tracking-tight">
+                <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold mb-4 tracking-tight">
                   {selectedVariant.groupName}
                 </h2>
                 <p className="text-lg text-white/70 font-light leading-relaxed max-w-lg">

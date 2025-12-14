@@ -94,10 +94,10 @@ export function HeroProductSlideshow() {
                     </div>
 
                     {/* Transparent Gradient Overlay for Text Readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 lg:opacity-0 lg:group-hover:opacity-90 transition-opacity duration-300" />
 
                     {/* Content Overlay - Transparent Background */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col z-20 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
                         <p className="text-xs text-white/70 mb-1 font-medium tracking-wide">SKU: {product.sku}</p>
                         <h3 className="font-display text-2xl font-bold text-white mb-2 line-clamp-2 tracking-wide leading-tight">
                             <Link to={`/product/${product.id}`} className="hover:underline">
@@ -184,7 +184,7 @@ export function HeroProductSlideshow() {
                     e.stopPropagation();
                     goPrev();
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
             >
                 <ChevronLeft className="w-5 h-5" />
             </button>
@@ -196,7 +196,7 @@ export function HeroProductSlideshow() {
                     e.stopPropagation();
                     goNext();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
             >
                 <ChevronRight className="w-5 h-5" />
             </button>

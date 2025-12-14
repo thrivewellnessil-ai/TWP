@@ -107,7 +107,7 @@ export default function ProductDetail() {
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Product Image - Left Side */}
-            <div className="flex items-center justify-center min-h-[500px]">
+            <div className="flex items-center justify-center min-h-[350px] lg:min-h-[500px]">
               <div className="relative w-full max-w-md">
                 {selected.image ? (
                   <img

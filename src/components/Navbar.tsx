@@ -84,7 +84,7 @@ export function Navbar() {
                   alt="Thrive"
                   className={cn(
                     "w-auto object-contain drop-shadow transition-transform duration-500 origin-left",
-                    "h-20 md:h-24 lg:h-28",
+                    "h-16 md:h-20 lg:h-28",
                     isScrolled ? "scale-75" : "scale-110"
                   )}
                 />
@@ -177,7 +177,7 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden glass mt-2 mx-4 rounded-xl p-4 animate-scale-in">
+          <div className="lg:hidden glass bg-black/90 mt-2 mx-4 rounded-xl p-4 animate-scale-in">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <a
