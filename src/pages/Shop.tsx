@@ -44,7 +44,9 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = sourceProducts.filter((product) => {
       const isVisible = product.category !== "Subscriptions" && product.status !== "Removal Requested";
-      const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+      const matchesCategory = selectedCategory === "All"
+        ? product.category !== "Accessories"
+        : product.category === selectedCategory;
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.groupName.toLowerCase().includes(searchQuery.toLowerCase());
 

@@ -16,20 +16,22 @@ export default function SupplementsPage() {
     const { products: csvProducts } = useProductsCsv();
     const sourceProducts = csvProducts.length ? csvProducts : products;
 
-    const supplementsProducts = useMemo(() => {
-        return sourceProducts.filter((product) => product.category === "Wellness" && product.groupName.includes("Peak"));
+    const wellnessProducts = useMemo(() => {
+        return sourceProducts.filter((product) =>
+            (product.category === "Wellness" && (product.groupName.includes("Peak") || product.groupName === "Surge IV"))
+        );
     }, [sourceProducts]);
 
     const groupedProducts = useMemo(() => {
         const groups: { [key: string]: Product[] } = {};
-        supplementsProducts.forEach(product => {
+        wellnessProducts.forEach(product => {
             if (!groups[product.groupName]) {
                 groups[product.groupName] = [];
             }
             groups[product.groupName].push(product);
         });
         return Object.values(groups);
-    }, [supplementsProducts]);
+    }, [wellnessProducts]);
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -51,7 +53,7 @@ export default function SupplementsPage() {
                             <span className="text-gradient">Supplements</span>
                         </h1>
                         <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
-                            Premium protein powders and nutritional supplements to fuel your fitness journey.
+                            Premium protein powders, electrolytes, and nutritional supplements to fuel your fitness journey.
                         </p>
                     </div>
 
@@ -101,7 +103,7 @@ export default function SupplementsPage() {
                                     index={index}
                                     addToCart={addToCart}
                                     sectionId={sectionId}
-                                    lineDescription="Premium protein and supplement formulas designed to support recovery and performance."
+                                    lineDescription="Premium formulas designed to support hydration, recovery, and performance."
                                 />
                                 {!isLast && (
                                     <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />

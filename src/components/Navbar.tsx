@@ -12,7 +12,6 @@ const navLinks = [
     hasDropdown: true,
     dropdownItems: [
       { label: "Water Bottles", href: "/shop/water-bottles" },
-      { label: "Electrolytes", href: "/shop/electrolytes" },
       { label: "Supplements", href: "/shop/supplements" },
 
       { label: "Bundles", href: "/shop/bundles" },
@@ -153,6 +152,9 @@ export function Navbar() {
                     </span>
                   )}
                 </Link>
+
+                {/* Divider */}
+                <div className="h-6 w-px bg-white/20"></div>
 
                 {/* Shop Button */}
                 <Button variant="nav-cta" className="rounded-full px-6 group relative hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] hover:shadow-blue-500/50 transition-all duration-300" asChild>

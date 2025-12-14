@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { PageLoader } from "@/components/PageLoader";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { FloatingCart } from "@/components/FloatingCart";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
@@ -21,7 +22,6 @@ import Featured from "./pages/Featured";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import WaterBottles from "./pages/WaterBottles";
-import Electrolytes from "./pages/Electrolytes";
 import Supplements from "./pages/Supplements";
 
 import Bundles from "./pages/Bundles";
@@ -49,12 +49,12 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <PageLoader />
+          <FloatingCart />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/featured" element={<Featured />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/shop/water-bottles" element={<WaterBottles />} />
-            <Route path="/shop/electrolytes" element={<Electrolytes />} />
             <Route path="/shop/supplements" element={<Supplements />} />
 
             <Route path="/shop/bundles" element={<Bundles />} />
