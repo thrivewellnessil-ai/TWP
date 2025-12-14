@@ -49,7 +49,7 @@ const teamMembers = [
     bio: "Leading sales initiatives and building strong customer relationships.",
     department: "Chief Team"
   },
-  
+
   // Accounting Team
   {
     name: "Ansh Jain",
@@ -72,7 +72,7 @@ const teamMembers = [
     bio: "Supporting financial operations and reporting.",
     department: "Accounting"
   },
-  
+
   // Creative Services
   {
     name: "Ronika Gajulapalli",
@@ -95,7 +95,7 @@ const teamMembers = [
     bio: "Leading creative direction and visual storytelling.",
     department: "Creative Services"
   },
-  
+
   // Sales
   {
     name: "Dumitru Busuioc",
@@ -111,7 +111,7 @@ const teamMembers = [
     bio: "Managing client relationships and ensuring customer satisfaction.",
     department: "Sales"
   },
-  
+
   // Marketing
   {
     name: "Reece Clavey",
@@ -134,7 +134,7 @@ const teamMembers = [
     bio: "Crafting compelling content that resonates with our audience.",
     department: "Marketing"
   },
-  
+
   // Human Resources
   {
     name: "Ethan Hsu",
@@ -422,7 +422,7 @@ export default function Team() {
                       </div>
 
                       {/* Info Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
                         <h3 className="font-display text-2xl font-bold text-white mb-1 tracking-tight">
                           {member.name}
                         </h3>

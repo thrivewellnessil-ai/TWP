@@ -18,32 +18,32 @@ const shippingInfo = [
         description: "Need it faster? Express shipping gets your order to you in no time."
     },
     {
-        icon: Clock,
-        title: "Same-Day Processing",
-        time: "Orders by 2PM EST",
-        price: "Included",
-        description: "Orders placed before 2PM EST on business days are processed the same day."
+        icon: MapPin,
+        title: "International Shipping",
+        time: "10-14 Business Days",
+        price: "Calculated at checkout",
+        description: "We now ship globally! International rates apply based on destination."
     }
 ];
 
 export default function Shipping() {
-  return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
+    return (
+        <div className="min-h-screen flex flex-col bg-background">
+            <Navbar />
 
-      <main className="flex-1 pt-44 pb-20">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                Shipping <span className="text-glacier">Information</span>
-              </h1>
-              <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-                Fast, reliable shipping to get your wellness products to your door.
-              </p>
-            </div>
+            <main className="flex-1 pt-44 pb-20">
+                <div className="container mx-auto px-4 lg:px-8">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-12">
+                            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                                Shipping <span className="text-glacier">Information</span>
+                            </h1>
+                            <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+                                Fast, reliable shipping to get your wellness products to your door.
+                            </p>
+                        </div>
 
-            {/* Shipping Options */}
+                        {/* Shipping Options */}
                         <div className="grid md:grid-cols-3 gap-6 mb-16">
                             {shippingInfo.map((option) => (
                                 <div key={option.title} className="glass rounded-xl p-6 border border-border text-center">
@@ -67,14 +67,15 @@ export default function Shipping() {
                                         Shipping Locations
                                     </h3>
                                     <p className="text-muted-foreground">
-                                        We currently ship to all 50 US states. International shipping is coming soon!
+                                        We currently ship to all 50 US states and now internationally to select countries!
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h3 className="font-semibold text-lg mb-2">Order Tracking</h3>
+                                    <h3 className="font-semibold text-lg mb-2">Delivery Issues</h3>
                                     <p className="text-muted-foreground">
-                                        Once your order ships, you'll receive an email with tracking information. You can track your package directly from the carrier's website.
+                                        If your package is lost, damaged, or hasn't arrived within the expected timeframe, please contact us at{" "}
+                                        <a href="/contact" className="text-glacier hover:underline">our contact page</a>.
                                     </p>
                                 </div>
 

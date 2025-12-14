@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ interface ProductLineSectionProps {
   sectionId: string;
   lineDescription: string;
 }
+
+const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
 export function ProductLineSection({
   variants,
@@ -78,19 +81,21 @@ export function ProductLineSection({
               !isEven && "lg:col-start-2"
             )}
           >
-            <div className="relative w-full max-w-md">
-              {selectedVariant.image && (
-                <img
-                  key={selectedVariant.image}
-                  src={selectedVariant.image.replace(/^public\//, "/")}
-                  alt={selectedVariant.name}
-                  loading="lazy"
-                  className="w-full h-auto object-contain drop-shadow-2xl"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              )}
+            <div className="relative w-full max-w-md group">
+              <Link to={`/product/${slugify(selectedVariant.groupName)}?sku=${selectedVariant.sku}`}>
+                {selectedVariant.image && (
+                  <img
+                    key={selectedVariant.image}
+                    src={selectedVariant.image.replace(/^public\//, "/")}
+                    alt={selectedVariant.name}
+                    loading="lazy"
+                    className="w-full h-auto object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                )}
+              </Link>
             </div>
           </div>
 
@@ -115,6 +120,36 @@ export function ProductLineSection({
               <div className="text-4xl font-bold">
                 ${selectedVariant.price.toFixed(2)}
               </div>
+
+              {/* Variants */}
+              {displayVariants.length > 1 && (
+                <div className="space-y-3">
+                  <p className="text-sm text-white/60 uppercase tracking-widest font-medium">
+                    Available {selectedVariant.category === "Supplements" || selectedVariant.category === "Wellness" ? "Flavors" : "Colors"}
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {displayVariants.map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedVariant(variant)}
+                        className={cn(
+                          "w-10 h-10 rounded-full border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white",
+                          selectedVariant.id === variant.id
+                            ? "border-white scale-110"
+                            : "border-white/30 hover:border-white/60",
+                          variant.hexColor === "#FFFFFF" && "bg-white border-white"
+                        )}
+                        style={{
+                          backgroundColor:
+                            variant.hexColor !== "#FFFFFF" ? variant.hexColor : undefined,
+                          backgroundImage: (variant.category === "Supplements" || variant.category === "Wellness") && !variant.hexColor ? "linear-gradient(45deg, #333, #666)" : undefined
+                        }}
+                        title={variant.color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Quantity and Add to Cart */}
               <div className="flex flex-col sm:flex-row gap-4 pt-2 justify-start items-start">
@@ -146,37 +181,6 @@ export function ProductLineSection({
                 </Button>
               </div>
 
-              {/* Variants */}
-              {displayVariants.length > 1 && (
-                <div className="space-y-3">
-                  <p className="text-sm text-white/60 uppercase tracking-widest font-medium">
-                    Available Options
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    {displayVariants.map((variant) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedVariant(variant)}
-                        className={cn(
-                          "w-10 h-10 rounded-full border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white",
-                          selectedVariant.id === variant.id
-                            ? "border-white scale-110"
-                            : "border-white/30 hover:border-white/60",
-                          variant.hexColor === "#FFFFFF" && "bg-white border-white"
-                        )}
-                        style={{
-                          backgroundColor:
-                            variant.hexColor !== "#FFFFFF" ? variant.hexColor : undefined,
-                        }}
-                        title={variant.color}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-
-
               {/* Generic specs */}
               <div className="pt-6 border-t border-white/10">
                 <div className="grid grid-cols-2 gap-4">
@@ -190,7 +194,7 @@ export function ProductLineSection({
                     <p className="text-xs text-white/60 uppercase tracking-widest mb-1">
                       Status
                     </p>
-                    <p className="text-lg font-semibold">{selectedVariant.status || "In Store"}</p>
+                    <p className="text-lg font-semibold">{selectedVariant.status || "In Stock"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-white/60 uppercase tracking-widest mb-1">

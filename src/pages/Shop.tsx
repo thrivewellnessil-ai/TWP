@@ -90,34 +90,27 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
       <div className="relative">
 
 
-        {/* Hero Section */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden">
-          {/* Image Background */}
-          <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-background"></div>
-          </div>
+        {/* Hero Section - Apple Style */}
+        <section className="relative h-screen flex items-center justify-center overflow-hidden pt-20">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-black to-black z-0"></div>
 
-          {/* Darker overlay for text readability */}
-          <div className="absolute inset-0 bg-black/40 z-10"></div>
-
-          {/* Content */}
-          <div className="container mx-auto px-4 lg:px-8 text-center relative z-20">
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 drop-shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-              Shop <span className="text-gradient">Thrive</span>
+          <div className="relative z-10 text-center px-4">
+            <h1 className="font-display text-6xl md:text-8xl font-bold mb-6 tracking-tight">
+              Shop Thrive
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
+            <p className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto font-light mb-8">
               Premium wellness products designed for those who demand more from life.
             </p>
           </div>
 
-          {/* Scroll Indicator anchored to hero bottom */}
+          {/* Scroll Indicator at Bottom */}
           <button
             type="button"
             aria-label="Scroll down"
             onClick={() => window.scrollTo({ behavior: 'smooth', top: window.innerHeight })}
             className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-30 hover:opacity-90 focus:outline-none"
           >
-            <ChevronDown className="w-8 h-8 text-white/80" />
+            <ChevronDown className="w-8 h-8 text-white/60" />
           </button>
         </section>
 

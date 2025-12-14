@@ -285,7 +285,20 @@ export default function CartTest() {
                   }}
                   className="rounded-full"
                 >
-                  Test Popup
+                  Test Add-to-Cart Popup
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    localStorage.removeItem("newsletterPopupShown");
+                    // alert("Newsletter popup history cleared. Integrating interaction listener..."); 
+                    // To ensure the listener attaches, we reload, OR we could rely on the user navigating away and back.
+                    // But simpler:
+                    window.location.reload();
+                  }}
+                  className="rounded-full border-dashed border-primary text-primary hover:bg-primary/10"
+                >
+                  Reset Newsletter Popup
                 </Button>
               </div>
             </div>

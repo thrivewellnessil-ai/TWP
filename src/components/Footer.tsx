@@ -93,9 +93,9 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                <Link to="/login" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="https://thrive-ve.streamlit.app/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                   Team Login
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -139,8 +139,11 @@ export function Footer() {
               Disclaimer: This Virtual Enterprise online store is for educational purposes only (Thrive 2025-2026)
             </p>
             <p className="text-xs text-muted-foreground/60 mt-2">
-              v1.5.0 - Dev Push
+              <Link to="/changelog" className="text-xs text-muted-foreground/60 hover:text-muted-foreground underline">
+                v1.7.1 - Stable Release
+              </Link>
             </p>
+
           </div>
         </div>
       </div>

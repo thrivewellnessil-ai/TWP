@@ -1,4 +1,5 @@
 # VE Wellness Blue
+**Current Version: v1.7.1**
 
 This repository contains the source code for the **VE Wellness Blue** e-commerce website, built with **React**, **Vite**, **Tailwind CSS**, and **shadcn/ui**. It provides a premium shopping experience for wellness products.
 

@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { PageLoader } from "@/components/PageLoader";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { FloatingCart } from "@/components/FloatingCart";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
@@ -26,6 +27,7 @@ import Supplements from "./pages/Supplements";
 
 import Bundles from "./pages/Bundles";
 import Cart from "./pages/Cart";
+import Changelog from "./pages/Changelog";
 import CheckoutLoading from "./pages/CheckoutLoading";
 import CheckoutManual from "./pages/CheckoutManual";
 import CheckoutProcessing from "./pages/CheckoutProcessing";
@@ -35,8 +37,6 @@ import Contact from "./pages/Contact";
 import Shipping from "./pages/Shipping";
 import Mission from "./pages/Mission";
 import Team from "./pages/Team";
-import OsmoElectrolytes from "./pages/OsmoElectrolytes";
-import MountainParallax from "./pages/MountainParallax";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +50,7 @@ const App = () => (
           <ScrollToTop />
           <PageLoader />
           <FloatingCart />
+          <NewsletterPopup />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/featured" element={<Featured />} />
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/cart-test" element={<CartTest />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/changelog" element={<Changelog />} />
             <Route path="/checkout-loading" element={<CheckoutLoading />} />
             <Route path="/checkout-manual" element={<CheckoutManual />} />
             <Route path="/checkout-processing" element={<CheckoutProcessing />} />
@@ -72,8 +74,6 @@ const App = () => (
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/mission" element={<Mission />} />
             <Route path="/team" element={<Team />} />
-            <Route path="/osmo-electrolytes" element={<OsmoElectrolytes />} />
-            <Route path="/mountain-parallax" element={<MountainParallax />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/terms" element={<Terms />} />
