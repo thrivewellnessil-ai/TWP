@@ -5,13 +5,43 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { products, categories, Product } from "@/data/products";
-import { useProductsCsv } from "@/hooks/useProductsCsv";
+import { ProductService } from "@/services/ProductService";
+import { Product } from "@/lib/supabase";
 import { Search, ShoppingBag, ArrowUpDown, ShoppingCart, ChevronDown, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 
+
+// Helper function to normalize product properties
+const normalizeProduct = (product: any) => {
+  // Handle both old camelCase and new snake_case properties
+  return {
+    ...product,
+    buyLink: product.buy_link || product.buyLink,
+    image: product.image_url || product.image,
+    groupName: product.group_name || product.groupName,
+    hexColor: product.hex_color || product.hexColor
+  };
+};
+
+const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
+const getGroupKey = (product: any) => {
+  const group = String(product.groupName || product.name || '').trim();
+  return slugify(group);
+};
+
+// Helper function to get category display name
+const getCategoryDisplayName = (category: string) => {
+  switch (category) {
+    case "Wellness": return "Electrolytes";
+    case "Water Bottles": return "Water Bottles";
+    case "Bundles": return "Bundles";
+    case "Accessories": return "Accessories";
+    default: return category;
+  }
+};
 
 type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc";
 
@@ -20,8 +50,32 @@ interface ShopProps {
 }
 
 export default function Shop({ category: categoryProp }: ShopProps = {}) {
-  const { products: csvProducts } = useProductsCsv();
-  const sourceProducts = csvProducts.length ? csvProducts : products;
+  const [supabaseProducts, setSupabaseProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Use only Supabase products
+  const sourceProducts = supabaseProducts;
+
+  // Fetch products and categories from Supabase
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productsData, categoriesData] = await Promise.all([
+          ProductService.getAllProducts(),
+          ProductService.getCategories()
+        ]);
+        setSupabaseProducts(productsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching data from Supabase:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
@@ -42,13 +96,16 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
   const [sortBy, setSortBy] = useState<SortOption>("name-asc");
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = sourceProducts.filter((product) => {
-      const isVisible = product.category !== "Subscriptions" && product.status !== "Removal Requested";
+    // Normalize all products to have consistent property names
+    const normalizedProducts = sourceProducts.map(normalizeProduct);
+    
+    let filtered = normalizedProducts.filter((product) => {
+      const isVisible = product.status !== "Phased Out" && product.status !== "Removal Requested";
       const matchesCategory = selectedCategory === "All"
-        ? product.category !== "Accessories"
+        ? true // Show all categories except Accessories by default
         : product.category === selectedCategory;
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.groupName.toLowerCase().includes(searchQuery.toLowerCase());
+        (product.groupName && product.groupName.toLowerCase().includes(searchQuery.toLowerCase()));
 
       return isVisible && matchesCategory && matchesSearch;
     });
@@ -56,9 +113,9 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "name-asc":
-          return a.groupName.localeCompare(b.groupName);
+          return (a.groupName || a.name).localeCompare(b.groupName || b.name);
         case "name-desc":
-          return b.groupName.localeCompare(a.groupName);
+          return (b.groupName || b.name).localeCompare(a.groupName || a.name);
         case "price-asc":
           return a.price - b.price;
         case "price-desc":
@@ -67,17 +124,18 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
           return 0;
       }
     });
-  }, [selectedCategory, searchQuery, sortBy, sourceProducts]);
+  }, [sourceProducts, selectedCategory, searchQuery, sortBy]);
 
   // Group products by groupName
   const groupedProducts = useMemo(() => {
-    const groups: { [key: string]: Product[] } = {};
+    const groups: { [key: string]: any[] } = {};
 
     filteredAndSortedProducts.forEach(product => {
-      if (!groups[product.groupName]) {
-        groups[product.groupName] = [];
+      const key = getGroupKey(product);
+      if (!groups[key]) {
+        groups[key] = [];
       }
-      groups[product.groupName].push(product);
+      groups[key].push(product);
     });
 
     return Object.values(groups);
@@ -201,7 +259,7 @@ export default function Shop({ category: categoryProp }: ShopProps = {}) {
   );
 }
 
-function ProductCard({ variants, index }: { variants: Product[]; index: number }) {
+function ProductCard({ variants, index }: { variants: any[]; index: number }) {
   const [selectedVariant, setSelectedVariant] = useState(variants[0]);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
@@ -210,7 +268,7 @@ function ProductCard({ variants, index }: { variants: Product[]; index: number }
     setSelectedVariant(variants[0]);
   }, [variants]);
 
-  const product = selectedVariant;
+  const product = normalizeProduct(selectedVariant);
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -319,9 +377,13 @@ function ProductCard({ variants, index }: { variants: Product[]; index: number }
                   "w-6 h-6 rounded-full border border-white/30 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-sm",
                   selectedVariant.id === variant.id && "ring-2 ring-white scale-110",
                   variant.hexColor === "#FFFFFF" && "bg-white",
+                  !variant.hexColor && "bg-white/10",
                 )}
-                style={{ backgroundColor: variant.hexColor }}
-                title={variant.color}
+                style={{
+                  backgroundColor: variant.hexColor || undefined,
+                  backgroundImage: !variant.hexColor ? 'linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0.45))' : undefined,
+                }}
+                title={variant.color || variant.name}
               />
             ))}
           </div>

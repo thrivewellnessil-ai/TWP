@@ -93,9 +93,9 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                <a href="https://thrive-ve.streamlit.app/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/login" className="text-muted-foreground hover:text-foreground transition-colors">
                   Team Login
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -140,7 +140,7 @@ export function Footer() {
             </p>
             <p className="text-xs text-muted-foreground/60 mt-2">
               <Link to="/changelog" className="text-xs text-muted-foreground/60 hover:text-muted-foreground underline">
-                v1.7.1 - Stable Release
+                v1.8.0 - Stable Release
               </Link>
             </p>
 

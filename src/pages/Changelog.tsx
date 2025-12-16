@@ -7,6 +7,18 @@ import { ArrowLeft } from "lucide-react";
 export default function Changelog() {
     const changes = [
         {
+            version: "1.8.0",
+            date: "December 15, 2025",
+            type: "Major Update",
+            items: [
+                "Added dynamic product specifications backed by Supabase JSONB.",
+                "Updated Product Detail to use Supabase data with variant-adaptive description, price, and specifications.",
+                "Added specifications editor to Product Management (create + edit).",
+                "Enabled product image uploads to Supabase Storage and fixed update flows.",
+                "Improved Netlify readiness with environment-based Supabase configuration."
+            ]
+        },
+        {
             version: "1.7.1",
             date: "December 14, 2025",
             type: "Stable Release",

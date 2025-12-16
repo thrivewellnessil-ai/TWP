@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Product } from "@/data/products";
+import type { Product } from "@/lib/supabase";
 
 interface ProductLineSectionProps {
   variants: Product[];
@@ -25,17 +25,11 @@ export function ProductLineSection({
   const isEven = index % 2 === 0;
 
   const displayVariants = useMemo(() => {
-    const filtered = variants.filter((variant) => variant.hexColor && variant.color);
+    const filtered = variants.filter((variant) => variant.hex_color && variant.color);
     if (filtered.length === 0) {
       return variants;
     }
-    const seen = new Set<string>();
-    return filtered.filter((variant) => {
-      const key = variant.hexColor as string;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    return filtered;
   }, [variants]);
 
   const [selectedVariant, setSelectedVariant] = useState(displayVariants[0]);
@@ -50,9 +44,9 @@ export function ProductLineSection({
     for (let i = 0; i < quantity; i++) {
       addToCart({
         name: selectedVariant.name,
-        link: selectedVariant.buyLink,
+        link: selectedVariant.buy_link,
         price: selectedVariant.price,
-        image: selectedVariant.image,
+        image: selectedVariant.image_url,
       });
     }
     setQuantity(1);
@@ -82,11 +76,11 @@ export function ProductLineSection({
             )}
           >
             <div className="relative w-full max-w-md group">
-              <Link to={`/product/${slugify(selectedVariant.groupName)}?sku=${selectedVariant.sku}`}>
-                {selectedVariant.image && (
+              <Link to={`/product/${slugify(selectedVariant.group_name || selectedVariant.name)}?sku=${selectedVariant.sku}`}>
+                {selectedVariant.image_url && (
                   <img
-                    key={selectedVariant.image}
-                    src={selectedVariant.image.replace(/^public\//, "/")}
+                    key={selectedVariant.image_url}
+                    src={selectedVariant.image_url}
                     alt={selectedVariant.name}
                     loading="lazy"
                     className="w-full h-auto object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
@@ -109,10 +103,10 @@ export function ProductLineSection({
             <div className="space-y-6">
               <div>
                 <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold mb-4 tracking-tight">
-                  {selectedVariant.groupName}
+                  {selectedVariant.group_name || selectedVariant.name}
                 </h2>
                 <p className="text-lg text-white/70 font-light leading-relaxed max-w-lg">
-                  {lineDescription}
+                  {selectedVariant.description || lineDescription}
                 </p>
               </div>
 
@@ -137,12 +131,12 @@ export function ProductLineSection({
                           selectedVariant.id === variant.id
                             ? "border-white scale-110"
                             : "border-white/30 hover:border-white/60",
-                          variant.hexColor === "#FFFFFF" && "bg-white border-white"
+                          variant.hex_color === "#FFFFFF" && "bg-white border-white"
                         )}
                         style={{
                           backgroundColor:
-                            variant.hexColor !== "#FFFFFF" ? variant.hexColor : undefined,
-                          backgroundImage: (variant.category === "Supplements" || variant.category === "Wellness") && !variant.hexColor ? "linear-gradient(45deg, #333, #666)" : undefined
+                            variant.hex_color !== "#FFFFFF" ? variant.hex_color : undefined,
+                          backgroundImage: (variant.category === "Supplements" || variant.category === "Wellness") && !variant.hex_color ? "linear-gradient(45deg, #333, #666)" : undefined
                         }}
                         title={variant.color}
                       />
@@ -206,7 +200,7 @@ export function ProductLineSection({
                     <p className="text-xs text-white/60 uppercase tracking-widest mb-1">
                       Group
                     </p>
-                    <p className="text-lg font-semibold">{selectedVariant.groupName}</p>
+                    <p className="text-lg font-semibold">{selectedVariant.group_name || selectedVariant.name}</p>
                   </div>
                 </div>
               </div>

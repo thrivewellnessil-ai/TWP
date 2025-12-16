@@ -1,30 +1,46 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { products, Product } from "@/data/products";
-import { useProductsCsv } from "@/hooks/useProductsCsv";
+import { ProductService } from "@/services/ProductService";
+import { Product } from "@/lib/supabase";
 import { ChevronDown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { ProductLineSection } from "@/components/ProductLineSection";
 
 export default function WaterBottlesPage() {
     const { addToCart } = useCart();
-    const { products: csvProducts } = useProductsCsv();
-    const sourceProducts = csvProducts.length ? csvProducts : products;
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const allProducts = await ProductService.getAllProducts();
+                setProducts(allProducts);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     const waterBottleProducts = useMemo(() => {
-        return sourceProducts.filter((product) => product.category === "Water Bottles");
-    }, [sourceProducts]);
+        return products.filter((product) => product.category === "Water Bottles");
+    }, [products]);
 
     // Group products by groupName
     const groupedProducts = useMemo(() => {
         const groups: { [key: string]: Product[] } = {};
 
         waterBottleProducts.forEach(product => {
-            if (!groups[product.groupName]) {
-                groups[product.groupName] = [];
+            const groupName = product.group_name || product.name;
+            if (!groups[groupName]) {
+                groups[groupName] = [];
             }
-            groups[product.groupName].push(product);
+            groups[groupName].push(product);
         });
 
         return Object.values(groups);
@@ -67,7 +83,7 @@ export default function WaterBottlesPage() {
                     </p>
                     <div className="flex flex-wrap justify-center gap-3">
                         {groupedProducts.map((group) => {
-                            const label = group[0].groupName;
+                            const label = group[0].group_name || group[0].name;
                             const sectionId = label.toLowerCase().replace(/\s+/g, "-");
                             return (
                                 <a
@@ -86,10 +102,10 @@ export default function WaterBottlesPage() {
             {/* Product Showcase Sections */}
             <div className="relative">
                 {groupedProducts.map((group, index) => {
-                    const sectionId = group[0].groupName.toLowerCase().replace(/\s+/g, "-");
+                    const sectionId = (group[0].group_name || group[0].name).toLowerCase().replace(/\s+/g, "-");
                     const isLast = index === groupedProducts.length - 1;
                     return (
-                        <div key={group[0].groupName}>
+                        <div key={group[0].id}>
                             <ProductLineSection
                                 variants={group}
                                 index={index}

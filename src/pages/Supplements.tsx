@@ -3,32 +3,47 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { products, Product } from "@/data/products";
-import { useProductsCsv } from "@/hooks/useProductsCsv";
+import { ProductService } from "@/services/ProductService";
+import { Product } from "@/lib/supabase";
 import { ShoppingCart, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/contexts/CartContext";
 import { ProductLineSection } from "@/components/ProductLineSection";
 
-
 export default function SupplementsPage() {
     const { addToCart } = useCart();
-    const { products: csvProducts } = useProductsCsv();
-    const sourceProducts = csvProducts.length ? csvProducts : products;
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const allProducts = await ProductService.getAllProducts();
+                setProducts(allProducts);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     const wellnessProducts = useMemo(() => {
-        return sourceProducts.filter((product) =>
-            (product.category === "Wellness" && (product.groupName.includes("Peak") || product.groupName === "Surge IV"))
+        return products.filter((product) =>
+            (product.category === "Wellness" && (product.group_name?.includes("Peak") || product.group_name?.includes("Surge")))
         );
-    }, [sourceProducts]);
+    }, [products]);
 
     const groupedProducts = useMemo(() => {
         const groups: { [key: string]: Product[] } = {};
         wellnessProducts.forEach(product => {
-            if (!groups[product.groupName]) {
-                groups[product.groupName] = [];
+            const groupName = product.group_name || product.name;
+            if (!groups[groupName]) {
+                groups[groupName] = [];
             }
-            groups[product.groupName].push(product);
+            groups[groupName].push(product);
         });
         return Object.values(groups);
     }, [wellnessProducts]);
@@ -68,7 +83,7 @@ export default function SupplementsPage() {
                     </p>
                     <div className="flex flex-wrap justify-center gap-3">
                         {groupedProducts.map((group) => {
-                            const label = group[0].groupName;
+                            const label = group[0].group_name || group[0].name;
                             const sectionId = label.toLowerCase().replace(/\s+/g, "-");
                             return (
                                 <a
@@ -87,16 +102,16 @@ export default function SupplementsPage() {
             {/* Product Showcase Sections */}
             <div className="relative">
                 {groupedProducts.map((group, index) => {
-                    const sectionId = group[0].groupName.toLowerCase().replace(/\s+/g, "-");
+                    const sectionId = (group[0].group_name || group[0].name).toLowerCase().replace(/\s+/g, "-");
                     const isLast = index === groupedProducts.length - 1;
                     return (
-                        <div key={group[0].groupName}>
+                        <div key={group[0].id}>
                             <ProductLineSection
                                 variants={group}
                                 index={index}
                                 addToCart={addToCart}
                                 sectionId={sectionId}
-                                lineDescription="Premium formulas designed to support hydration, recovery, and performance."
+                                lineDescription="Premium wellness supplements designed to support your active lifestyle and optimize performance."
                             />
                             {!isLast && (
                                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />

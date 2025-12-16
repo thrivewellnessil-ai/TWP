@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { PageLoader } from "@/components/PageLoader";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { FloatingCart } from "@/components/FloatingCart";
@@ -11,12 +12,13 @@ import { NewsletterPopup } from "@/components/NewsletterPopup";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
-
 import About from "./pages/About";
 import Stories from "./pages/Stories";
-
+import Team from "./pages/Team";
+import ProductManagement from "./pages/ProductManagement";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import ProductDetail from "./pages/ProductDetail";
 import CartTest from "./pages/CartTest";
 import Featured from "./pages/Featured";
@@ -36,22 +38,22 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import Shipping from "./pages/Shipping";
 import Mission from "./pages/Mission";
-import Team from "./pages/Team";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <PageLoader />
-          <FloatingCart />
-          <NewsletterPopup />
-          <Routes>
+      <AuthProvider>
+        <CartProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <PageLoader />
+            <FloatingCart />
+            <NewsletterPopup />
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/featured" element={<Featured />} />
             <Route path="/shop" element={<Shop />} />
@@ -74,6 +76,11 @@ const App = () => (
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/mission" element={<Mission />} />
             <Route path="/team" element={<Team />} />
+            <Route path="/product-management" element={
+              <ProtectedRoute>
+                <ProductManagement />
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/terms" element={<Terms />} />
@@ -83,8 +90,9 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </CartProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </AuthProvider>
+  </TooltipProvider>
+</QueryClientProvider>
 );
 
 export default App;

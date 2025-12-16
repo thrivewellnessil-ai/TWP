@@ -4,18 +4,44 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login - in a real app, validate credentials
-        if (email && password) {
-            localStorage.setItem("isAdmin", "true");
-            navigate("/admin");
+        setIsLoading(true);
+
+        try {
+            const success = await login(email, password);
+            if (!success) {
+                toast.error("Invalid credentials");
+                return;
+            }
+
+            const adminEmail = String(import.meta.env.VITE_ADMIN_EMAIL ?? '').trim().toLowerCase();
+            const { data } = await supabase.auth.getUser();
+            const signedInEmail = String(data.user?.email ?? '').toLowerCase();
+
+            if (adminEmail && signedInEmail !== adminEmail) {
+                await supabase.auth.signOut();
+                toast.error("Access denied");
+                return;
+            }
+
+            toast.success("Login successful!");
+            navigate("/product-management");
+        } catch (error) {
+            toast.error("Login failed. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -33,7 +59,7 @@ export default function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                placeholder="admin@thrive.com"
+                                placeholder="team@company.com"
                             />
                         </div>
                         <div>
@@ -46,8 +72,8 @@ export default function Login() {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Login
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading ? "Logging in..." : "Login"}
                         </Button>
                     </form>
                 </div>
