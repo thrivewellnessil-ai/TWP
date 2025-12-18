@@ -99,9 +99,9 @@ export function Hero() {
           {/* WELLNESS THAT WORKS */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 animate-fade-in-up delay-100 mb-10 md:mb-12 w-full">
             <span className="font-display font-bold text-white tracking-wide text-[clamp(1.1rem,4vw,2.8rem)] text-center sm:text-left">
-              WELLNESS THAT
+              WELLNESS THAT 
             </span>
-            <span className="font-display font-bold tracking-wide text-[clamp(1.1rem,4vw,2.8rem)]" style={{ color: '#3686F5' }}>
+            <span className="font-display font-bold tracking-wide text-[clamp(1.1rem,4vw,2.8rem)]" style={{ color: '#ffffffff' }}>
               WORKS
             </span>
           </div>

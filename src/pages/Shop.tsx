@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -264,10 +264,23 @@ function ProductCard({ variants, index }: { variants: any[]; index: number }) {
   const [selectedVariant, setSelectedVariant] = useState(variants[0]);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const swatchScrollRef = useRef<HTMLDivElement | null>(null);
+  const swatchRowRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     setSelectedVariant(variants[0]);
   }, [variants]);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, []);
 
   const product = normalizeProduct(selectedVariant);
 
@@ -303,10 +316,38 @@ function ProductCard({ variants, index }: { variants: any[]; index: number }) {
 
   return (
     <div
+      ref={cardRef}
       className={cn(
         "group relative rounded-2xl overflow-hidden transition-all duration-500 h-[500px] shadow-xl hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 animate-fade-in-up border border-border/50",
       )}
       style={{ animationDelay: `${index * 50}ms` }}
+      onMouseLeave={() => {
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      }}
+      onMouseMove={(e) => {
+        if (variants.length <= 1) return;
+
+        const cardEl = cardRef.current;
+        const scroller = swatchScrollRef.current;
+        if (!cardEl || !scroller) return;
+
+        if (scroller.scrollWidth <= scroller.clientWidth + 1) return;
+
+        const rect = cardEl.getBoundingClientRect();
+        const ratio = (e.clientX - rect.left) / rect.width;
+
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+          if (ratio >= 0.82) {
+            scroller.scrollTo({ left: scroller.scrollWidth, behavior: "smooth" });
+          } else if (ratio <= 0.18) {
+            scroller.scrollTo({ left: 0, behavior: "smooth" });
+          }
+        });
+      }}
     >
       {/* Full Background Image */}
       <div className="absolute inset-0 bg-white">
@@ -358,37 +399,44 @@ function ProductCard({ variants, index }: { variants: any[]; index: number }) {
 
       {/* Product Info Overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col z-20 text-white">
-        <h3 className="font-display text-2xl font-bold mb-3 line-clamp-2 tracking-wide leading-tight shadow-black/50 drop-shadow-md">
+        {/* Variant Swatches Row (reserved height so all cards align) */}
+        <div
+          ref={swatchRowRef}
+          className="h-7 mb-1 relative -mx-6 px-6"
+        >
+          {variants.length > 1 && (
+            <div
+              ref={swatchScrollRef}
+              className="flex gap-2 items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 overflow-x-auto w-full"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {variants.map((variant) => (
+                <button
+                  key={variant.id}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedVariant(variant);
+                  }}
+                  className={cn(
+                    "w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110 focus:outline-none shadow-sm flex-none",
+                    variant.hexColor === "#FFFFFF" && "bg-white",
+                    !variant.hexColor && "bg-white/10",
+                  )}
+                  style={{
+                    backgroundColor: variant.hexColor || undefined,
+                    backgroundImage: !variant.hexColor ? 'linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0.45))' : undefined,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <h3 className="font-display text-2xl font-bold mb-2 line-clamp-2 tracking-wide leading-tight shadow-black/50 drop-shadow-md">
           <Link to={`/product/${slugify(product.groupName)}`} className="hover:underline">
             {product.groupName}
           </Link>
         </h3>
-
-        {/* Variant Swatches */}
-        {variants.length > 1 && (
-          <div className="flex flex-wrap gap-2 mb-4 items-center">
-            {variants.map((variant) => (
-              <button
-                key={variant.id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setSelectedVariant(variant);
-                }}
-                className={cn(
-                  "w-6 h-6 rounded-full border border-white/30 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-sm",
-                  selectedVariant.id === variant.id && "ring-2 ring-white scale-110",
-                  variant.hexColor === "#FFFFFF" && "bg-white",
-                  !variant.hexColor && "bg-white/10",
-                )}
-                style={{
-                  backgroundColor: variant.hexColor || undefined,
-                  backgroundImage: !variant.hexColor ? 'linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0.45))' : undefined,
-                }}
-                title={variant.color || variant.name}
-              />
-            ))}
-          </div>
-        )}
 
         <div className="mt-2 space-y-4">
           <div className="flex items-center justify-between">

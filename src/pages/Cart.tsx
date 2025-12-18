@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { Trash2, ShoppingBag, Truck, Zap } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, totalPrice, totalItems, addToCart } = useCart();
@@ -158,41 +159,62 @@ export default function Cart() {
                     {/* Shipping Selection */}
                     <div className="space-y-3 pt-2">
                       <label className="text-sm font-medium">Shipping Method</label>
-                      <Select value={shippingMethod} onValueChange={(value) => setShippingMethod(value as 'standard' | 'express')}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select shipping method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {shippingOptions.map((option) => {
-                            const Icon = option.icon;
-                            return (
-                              <SelectItem key={option.value} value={option.value}>
-                                <div className="flex items-center gap-3 w-full">
-                                  <Icon className="w-4 h-4 text-muted-foreground" />
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium">{option.label}</span>
-                                      <Badge variant={option.price === 0 ? "secondary" : "outline"} className="text-xs">
-                                        {option.badge}
-                                      </Badge>
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">
-                                      {option.description}
-                                    </div>
+                      
+                      <div className="space-y-2">
+                        {shippingOptions.map((option) => {
+                          const Icon = option.icon;
+                          const isSelected = shippingMethod === option.value;
+                          return (
+                            <button
+                              key={option.value}
+                              onClick={() => setShippingMethod(option.value as 'standard' | 'express')}
+                              className={cn(
+                                "w-full p-4 rounded-xl border transition-all duration-200 text-left",
+                                isSelected 
+                                  ? "border-primary bg-primary/5 shadow-sm" 
+                                  : "border-border hover:border-primary/50 hover:bg-white/5"
+                              )}
+                            >
+                              <div className="flex items-start gap-3">
+                                <Icon className={cn(
+                                  "w-5 h-5 mt-0.5 flex-shrink-0",
+                                  isSelected ? "text-primary" : "text-muted-foreground"
+                                )} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={cn(
+                                      "font-medium",
+                                      isSelected ? "text-primary" : ""
+                                    )}>
+                                      {option.label}
+                                    </span>
+                                    <Badge 
+                                      variant={option.price === 0 ? "secondary" : "outline"} 
+                                      className={cn(
+                                        "text-xs font-medium",
+                                        option.price === 0 ? "bg-green-100 text-green-800 border-green-200" : ""
+                                      )}
+                                    >
+                                      {option.badge}
+                                    </Badge>
+                                  </div>
+                                  <div className={cn(
+                                    "text-sm",
+                                    isSelected ? "text-primary/80" : "text-muted-foreground"
+                                  )}>
+                                    {option.description}
                                   </div>
                                 </div>
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
 
-                      {selectedShipping && (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg p-2">
-                          <selectedShipping.icon className="w-3 h-3" />
-                          <span>{selectedShipping.description}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3 mt-2">
+                        <selectedShipping.icon className="w-4 h-4" />
+                        <span>Estimated delivery: {selectedShipping.description}</span>
+                      </div>
                     </div>
 
                     <div className="flex justify-between text-muted-foreground pt-2">
