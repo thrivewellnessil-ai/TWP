@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.8.0",
   "type": "module",
+  "homepage": "https://ishaanman7898.github.io/ve-wellness-blue",
   "scripts": {
     "dev": "concurrently -n frontend,cart -c cyan,green \"npm run dev:frontend\" \"npm run dev:cart\"",
     "dev:frontend": "vite",
@@ -11,7 +12,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "concurrently -n frontend,cart -c cyan,green \"npm run dev:frontend\" \"npm run dev:cart\""
+    "start": "concurrently -n frontend,cart -c cyan,green \"npm run dev:frontend\" \"npm run dev:cart\"",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
