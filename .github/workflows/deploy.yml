@@ -32,7 +32,15 @@ jobs:
       run: npm ci
 
     - name: Build the app
-      run: npm run build -- --base=/TWP/
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+    - name: Verify build output
+      run: |
+        echo "Checking index.html for correct base paths..."
+        grep -o 'href="/TWP/assets/[^"]*"' dist/index.html | head -5
+        grep -o 'src="/TWP/assets/[^"]*"' dist/index.html | head -5
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
